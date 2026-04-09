@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.wy</groupId>
+        <artifactId>online-shop</artifactId>
+        <version>0.0.1</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>shop-admin</artifactId>
+    <name>Shop Admin</name>
+    <description>管理后台子模块-后台管理业务入口</description>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <!-- 【核心】引用公共子模块，直接复用里面的Result类 -->
+        <dependency>
+            <groupId>com.wy</groupId>
+            <artifactId>shop-common</artifactId>
+        </dependency>
+        <!-- Web依赖：SpringBoot Web开发核心依赖 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+    </dependencies>
+
+    <!-- SpringBoot打包插件：必须配置，才能打包为可执行Jar包 -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.wy</groupId>
+        <artifactId>online-shop</artifactId>
+        <version>0.0.1</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>shop-common</artifactId>
+    <name>Shop Common</name>
+    <description>公共子模块-通用代码、工具类</description>
+    <!-- 打包方式为jar，作为依赖被其他模块引用 -->
+    <packaging>jar</packaging>
+
+
+</project>
