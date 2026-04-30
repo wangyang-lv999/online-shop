@@ -17,16 +17,47 @@
 
     <dependencies>
         <!-- 【核心】引用公共子模块，直接复用里面的Result类 -->
+        <!-- 【核心必加】依赖公共模块，才能用里面的实体类、Result类 -->
         <dependency>
             <groupId>com.wy</groupId>
             <artifactId>shop-common</artifactId>
+            <version>${project.version}</version>
         </dependency>
-        <!-- Web依赖：SpringBoot Web开发核心依赖 -->
+
+        <!-- SpringBoot Web核心依赖，原有不动 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
+        <!-- 【新增】MyBatis整合依赖 -->
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- 【新增】MySQL驱动依赖 -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+        </dependency>
+
+        <!-- Lombok依赖，原有不动 -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- 单元测试依赖，原有不动 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
+
+
 
     <!-- SpringBoot打包插件：必须配置，才能打包为可执行Jar包 -->
     <build>

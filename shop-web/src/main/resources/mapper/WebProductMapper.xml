@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 固定DTD约束，和用户模块一致 -->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace必须和Mapper接口的全限定包名+类名完全一致 -->
+<mapper namespace="com.ylh.shop.web.mapper.WebProductMapper">
+
+    <!-- 根据ID查询商品详情，对应接口的selectProductById方法 -->
+    <!-- resultType写Product，因为yml中配置了公共实体类的别名扫描 -->
+    <select id="selectProductById" resultType="Product">
+        SELECT * FROM sys_product
+        WHERE product_id = #{productId}
+        -- 前台只允许查询上架的商品，增加状态过滤
+        AND status = 1
+    </select>
+
+    <!-- 查询所有上架商品，支持模糊查询，对应接口的selectAllOnSaleProduct方法 -->
+    <select id="selectAllOnSaleProduct" resultType="Product">
+        SELECT * FROM sys_product
+        -- 固定条件：只查询上架的商品
+        WHERE status = 1
+        <!-- 【教学重点：动态SQL标签<if>】 -->
+        <!-- test属性：判断条件，productName是接口的@Param注解的参数名 -->
+        <!-- 作用：如果productName不为空，才拼接模糊查询的SQL，实现非必传的条件筛选 -->
+        <if test="productName != null and productName.trim() != ''">
+            AND product_name LIKE CONCAT('%', #{productName}, '%')
+        </if>
+        -- 按创建时间倒序，最新的商品排在前面
+        ORDER BY create_time DESC
+    </select>
+
+</mapper>

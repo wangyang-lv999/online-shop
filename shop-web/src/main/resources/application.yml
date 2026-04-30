@@ -1,7 +1,29 @@
 # 服务器端口配置
 server:
   port: 8080
-# 应用名称
+
+# Spring核心配置
 spring:
   application:
-    name: shop-web
+    name: shop-web # 应用名称
+  # 【核心必配】数据库连接配置，Java程序连接MySQL的必备信息
+  datasource:
+    # 数据库连接地址：固定格式jdbc:mysql://数据库地址:端口/数据库名?参数
+    # 固定参数：解决中文乱码、时区问题、SSL警告
+    url: jdbc:mysql://localhost:3306/shop?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false
+    username: root # 你的MySQL登录用户名
+    password: 123456 # 你的MySQL登录密码
+    driver-class-name: com.mysql.cj.jdbc.Driver # MySQL8.0+固定驱动类名，不能改
+
+# 【核心必配】MyBatis配置
+mybatis:
+  # 告诉MyBatis：SQL映射XML文件放在哪里
+  # classpath:对应resources目录，mapper/*.xml表示resources/mapper目录下所有.xml文件
+  mapper-locations: classpath:mapper/*.xml
+  # 给实体类起别名：XML中直接写类名User/Product，不用写全限定包名
+  type-aliases-package: com.wy.shop.common.entity
+  configuration:
+    # 【必开】下划线转驼峰：数据库的user_id自动映射到实体类的userId
+    map-underscore-to-camel-case: true
+    # 【开发必开】SQL日志打印：控制台会输出执行的SQL、参数、结果，调试必备
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

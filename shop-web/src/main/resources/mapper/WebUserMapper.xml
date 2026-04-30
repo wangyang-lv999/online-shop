@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 【固定写法】DTD约束：告诉IDEA这是MyBatis的映射文件，提供语法提示和校验，不能改 -->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 【核心根标签】mapper标签：所有SQL必须写在这个标签里面 -->
+<!-- namespace属性：【绝对不能写错】必须和对应的Mapper接口的「全限定包名+类名」完全一致 -->
+<!-- 作用：把这个XML文件和上面的WebUserMapper接口绑定在一起 -->
+<mapper namespace="com.wy.shop.web.mapper.WebUserMapper">
+
+    <!-- 【查询标签】select标签：用来写查询SQL，对应接口的selectUserById方法 -->
+    <!-- id属性：【绝对不能写错】必须和Mapper接口中的方法名完全一致 -->
+    <!-- resultType属性：查询结果要封装的Java类型，这里写User是因为yml中配置了别名扫描 -->
+    <select id="selectUserById" resultType="User">
+<!--        &#45;&#45; #{userId}：MyBatis的预编译占位符，自动获取接口中@Param("userId")对应的参数值。注意此处有问题-->
+<!--        &#45;&#45; 底层用PreparedStatement实现，防止SQL注入，所有普通参数必须用这个-->
+        SELECT * FROM sys_user WHERE user_id = #{userId}
+    </select>
+
+    <!-- 查询所有启用的用户，对应接口的selectAllActiveUser方法 -->
+    <select id="selectAllActiveUser" resultType="User">
+        SELECT * FROM sys_user WHERE status = 1
+    </select>
+
+    <!-- 【新增标签】insert标签：用来写新增SQL，对应接口的insertUser方法 -->
+    <!-- 增删改标签不需要resultType，默认返回int类型的受影响行数 -->
+    <!-- useGeneratedKeys="true"：开启主键自增返回，新增成功后，把数据库生成的自增主键赋值给user对象的userId属性 -->
+    <!-- keyProperty="userId"：指定主键对应的实体类属性名，必须和实体类的属性名一致 -->
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO sys_user (username, password, nickname, age, email)
+<!--        &#45;&#45; #{username}：自动从传入的User对象中，获取username属性的值，其他字段同理。注意此处有问题-->
+        VALUES (#{username}, #{password}, #{nickname}, #{age}, #{email})
+    </insert>
+
+    <!-- 根据用户名查询用户，对应接口的selectUserByUsername方法 -->
+    <select id="selectUserByUsername" resultType="User">
+        SELECT * FROM sys_user WHERE username = #{username}
+    </select>
+
+</mapper>
