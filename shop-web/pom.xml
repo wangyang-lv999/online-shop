@@ -30,10 +30,12 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!-- 【新增】MyBatis整合依赖 -->
+        <!-- 【替换】删除之前的mybatis-spring-boot-starter，换成MP的依赖 -->
+        <!-- MyBatis-Plus 适配SpringBoot3.x 专用依赖 -->
         <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+            <version>3.5.7</version>
         </dependency>
 
         <!-- 【新增】MySQL驱动依赖 -->

@@ -12,9 +12,15 @@ spring:
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-mybatis:
+mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.wy.shop.common.entity
   configuration:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      # 表名前缀：和我们的表sys_user、sys_product对应，实体类不用重复写sys_前缀
+      table-prefix: sys_
+      # 主键自增策略：全局统一主键自增
+      id-type: auto

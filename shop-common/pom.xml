@@ -13,6 +13,14 @@
     <artifactId>shop-common</artifactId>
     <name>Shop Common</name>
     <description>公共子模块-通用代码、工具类</description>
+    <dependencies>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-annotation</artifactId>
+            <version>3.5.7</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
     <!-- 打包方式为jar，作为依赖被其他模块引用 -->
     <packaging>jar</packaging>
 

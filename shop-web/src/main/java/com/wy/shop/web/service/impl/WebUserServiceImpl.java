@@ -1,5 +1,7 @@
 package com.wy.shop.web.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wy.shop.common.entity.User;
 import com.wy.shop.web.mapper.WebUserMapper;
 import com.wy.shop.web.service.WebUserService;
@@ -14,34 +16,50 @@ import java.util.List;
 // @Service：Spring核心注解，必须加
 // 作用：标记这个类是业务层实现类，Spring会自动管理这个对象，Controller中可以注入使用
 @Service
-public class WebUserServiceImpl implements WebUserService {
+public class WebUserServiceImpl extends ServiceImpl<WebUserMapper, User> implements WebUserService {
 
-    // @Autowired：自动注入Mapper接口的动态代理对象，不用手动new
-    @Autowired
-    private WebUserMapper webUserMapper;
+//    // @Autowired：自动注入Mapper接口的动态代理对象，不用手动new
+//    @Autowired
+//    private WebUserMapper webUserMapper;
+//
+//    @Override
+//    public User getUserById(Long userId) {
+//        // 直接调用Mapper的方法，执行SQL查询
+//        return webUserMapper.selectUserById(userId);
+//    }
+//
+//    @Override
+//    public List<User> getAllActiveUser() {
+//        return webUserMapper.selectAllActiveUser();
+//    }
 
-    @Override
-    public User getUserById(Long userId) {
-        // 直接调用Mapper的方法，执行SQL查询
-        return webUserMapper.selectUserById(userId);
+//    @Override
+//    public Boolean registerUser(User user) {
+//        // 【业务逻辑1】判断用户名是否已存在
+//        User existUser = webUserMapper.selectUserByUsername(user.getUsername());
+//        if (existUser != null) {
+//            // 用户名已存在，抛出异常，Controller中捕获后返回错误提示
+//            throw new RuntimeException("用户名已存在，无法注册");
+//        }
+//        // 【业务逻辑2】调用Mapper执行新增操作
+//        int rows = webUserMapper.insertUser(user);
+//        // 受影响行数>0表示新增成功，返回true；否则返回false
+//        return rows > 0;
+//    }
+@Override
+public Boolean registerUser(User user) {
+    // 【业务逻辑1】判断用户名是否已存在，用MP的条件构造器实现，无需XML
+    // LambdaQueryWrapper：MP的条件构造器，避免硬编码字段名
+    LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+    // 等价于SQL：WHERE username = ?
+    queryWrapper.eq(User::getUsername, user.getUsername());
+    // 统计符合条件的行数
+    long count = this.count(queryWrapper);
+    if (count > 0) {
+        throw new RuntimeException("用户名已存在，无法注册");
     }
-
-    @Override
-    public List<User> getAllActiveUser() {
-        return webUserMapper.selectAllActiveUser();
-    }
-
-    @Override
-    public Boolean registerUser(User user) {
-        // 【业务逻辑1】判断用户名是否已存在
-        User existUser = webUserMapper.selectUserByUsername(user.getUsername());
-        if (existUser != null) {
-            // 用户名已存在，抛出异常，Controller中捕获后返回错误提示
-            throw new RuntimeException("用户名已存在，无法注册");
-        }
-        // 【业务逻辑2】调用Mapper执行新增操作
-        int rows = webUserMapper.insertUser(user);
-        // 受影响行数>0表示新增成功，返回true；否则返回false
-        return rows > 0;
-    }
+    // 【业务逻辑2】调用MP通用的新增方法，无需写XML
+    // this.save() 是ServiceImpl提供的通用新增方法
+    return this.save(user);
+}
 }

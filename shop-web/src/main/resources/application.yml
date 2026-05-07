@@ -16,7 +16,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver # MySQL8.0+固定驱动类名，不能改
 
 # 【核心必配】MyBatis配置
-mybatis:
+mybatis-plus:
   # 告诉MyBatis：SQL映射XML文件放在哪里
   # classpath:对应resources目录，mapper/*.xml表示resources/mapper目录下所有.xml文件
   mapper-locations: classpath:mapper/*.xml
@@ -27,3 +27,10 @@ mybatis:
     map-underscore-to-camel-case: true
     # 【开发必开】SQL日志打印：控制台会输出执行的SQL、参数、结果，调试必备
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  # 【MP特有配置】全局配置
+  global-config:
+    db-config:
+      # 表名前缀：和我们的表sys_user、sys_product对应，实体类不用重复写sys_前缀
+      table-prefix: sys_
+      # 主键自增策略：全局统一主键自增
+      id-type: auto

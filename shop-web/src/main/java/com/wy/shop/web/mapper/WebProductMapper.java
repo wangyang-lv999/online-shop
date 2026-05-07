@@ -1,5 +1,6 @@
 package com.wy.shop.web.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.wy.shop.common.entity.Product; // 引用公共模块的商品实体类
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -10,7 +11,7 @@ import java.util.List;
  * 前台商品DAO层接口：定义商品相关的数据库操作方法
  */
 @Mapper // 标记为MyBatis的Mapper接口，自动生成动态代理对象
-public interface WebProductMapper {
+public interface WebProductMapper extends BaseMapper<Product> {
 
     /**
      * 根据商品ID查询商品详情

@@ -1,5 +1,6 @@
 package com.wy.shop.web.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.wy.shop.common.entity.User; // 引用公共模块的用户实体类
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -13,7 +14,7 @@ import java.util.List;
 // @Mapper：MyBatis核心注解，必须加
 // 作用：告诉MyBatis这是Mapper接口，启动时自动生成动态代理实现类，交给Spring管理
 @Mapper
-public interface WebUserMapper {
+public interface WebUserMapper extends BaseMapper<User> {
 
     /**
      * 根据用户ID查询用户信息

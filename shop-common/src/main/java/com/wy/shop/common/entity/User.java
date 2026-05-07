@@ -1,5 +1,9 @@
 package com.wy.shop.common.entity;
 
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,10 +20,16 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 // 自动生成全参构造方法
 @AllArgsConstructor
+// 【MP注解】标记对应数据库表名，因为配置了table-prefix: sys_，这里只需要写user即可
+//@TableName("user") //自定义表名，覆盖全局配置
+@TableName
 public class User {
     /**
      * 用户ID，对应数据库的user_id字段，主键自增
      */
+    // 【MP注解】标记主键字段，指定主键自增策略
+    @TableId(type = IdType.AUTO)
+    //注意：如果数据库里的字段名就是 user_id，MP 的自动驼峰转换会识别它。但如果数据库里字段名是 id，而实体类叫 userId，则需要写成 @TableId(value = "id", type = IdType.AUTO)
     private Long userId;
 
     /**

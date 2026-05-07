@@ -1,5 +1,9 @@
 package com.wy.shop.common.entity;
 
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +18,9 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@TableName
 public class Product {
+    @TableId(type = IdType.AUTO)
     /**
      * 商品ID，对应数据库的product_id字段，主键自增
      */
