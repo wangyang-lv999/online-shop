@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>在线商城 - 首页</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; }
+        nav  { background: #2c3e50; padding: 12px 20px; color: white; margin-bottom: 20px; }
+        nav a { color: white; text-decoration: none; margin-right: 16px; }
+    </style>
+</head>
+<body>
+<nav>
+    <strong>在线商城</strong>
+
+    <!-- 已登录：显示欢迎信息 + 退出 -->
+    <span th:if="${session.loginUser != null}" style="float: right;">
+            欢迎，<strong th:text="${session.loginUser.nickname}">用户</strong>
+            &nbsp;|&nbsp;
+            <a th:href="@{/logout}">退出登录</a>
+        </span>
+
+    <!-- 未登录：显示登录 / 注册 -->
+    <span th:unless="${session.loginUser != null}" style="float: right;">
+            <a th:href="@{/login}">登录</a>
+            &nbsp;|&nbsp;
+            <a th:href="@{/register}">注册</a>
+        </span>
+</nav>
+
+<h1>欢迎来到在线商城</h1>
+<p>这是首页，制作中...</p>
+<!-- 进阶作业：在此添加商品列表 -->
+</body>
+</html>

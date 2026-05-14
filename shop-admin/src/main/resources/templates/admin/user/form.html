@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>编辑用户</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif; }
+        .header {
+            background: #343a40; color:white; padding:0 30px; height:60px;
+            display:flex; align-items:center;
+        }
+        .header h3 { margin-right:30px; }
+        .nav a { color:white; margin:0 10px; text-decoration:none; padding:8px 12px; }
+        .container { max-width:600px; margin:40px auto; padding:20px; }
+        input, select { width:100%; padding:10px; margin:6px 0 14px; }
+        .btn { padding:10px 20px; border:none; cursor:pointer; }
+        .save { background:#27ae60; color:white; }
+        .back { background:#95a5a6; color:white; text-decoration:none; margin-left:10px; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h3>电商后台管理</h3>
+    <div class="nav">
+        <a href="/admin/user/list">用户管理</a>
+        <a href="javascript:;">商品管理</a>
+    </div>
+</div>
+
+<div class="container">
+    <h3>编辑用户</h3>
+    <form th:action="@{/admin/user/save}" th:object="${user}" method="post">
+        <input type="hidden" th:field="*{userId}">
+
+        <label>用户名</label>
+        <input type="text" th:field="*{username}" readonly>
+
+        <label>昵称</label>
+        <input type="text" th:field="*{nickname}">
+
+        <label>年龄</label>
+        <input type="number" th:field="*{age}">
+
+        <label>邮箱</label>
+        <input type="email" th:field="*{email}">
+
+        <label>状态</label>
+        <select th:field="*{status}">
+            <option value="1">正常</option>
+            <option value="0">禁用</option>
+        </select>
+
+        <button type="submit" class="btn save">保存</button>
+        <a href="/admin/user/list" class="btn back">返回</a>
+    </form>
+</div>
+</body>
+</html>

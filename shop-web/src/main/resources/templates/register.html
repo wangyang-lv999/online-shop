@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>用户注册</title>
+  <style>
+    body   { font-family: Arial, sans-serif; max-width: 400px; margin: 60px auto; }
+    .error { color: #e74c3c; margin-bottom: 10px; }
+    input  { width: 100%; padding: 8px; margin: 6px 0 14px; box-sizing: border-box; }
+    button { width: 100%; padding: 10px; background: #27ae60; color: white; border: none; cursor: pointer; }
+    .link { text-align: center; margin-top: 16px; }
+    .server-time { text-align: center; color: #666; font-size: 12px; margin-top: 15px; }
+  </style>
+</head>
+<body>
+<h2>用户注册</h2>
+<p class="error" th:if="${error != null}" th:text="${error}"></p>
+
+<form th:action="@{/register}" th:object="${user}" method="post">
+  <label>用户名</label>
+  <input type="text" th:field="*{username}" placeholder="请输入用户名" required />
+
+  <label>密码</label>
+  <input type="password" th:field="*{password}" placeholder="请输入密码" required />
+
+  <label>昵称</label>
+  <input type="text" th:field="*{nickname}" placeholder="请输入昵称" required />
+
+  <label>年龄</label>
+  <input type="number" th:field="*{age}" placeholder="请输入年龄" required />
+
+  <label>邮箱</label>
+  <input type="email" th:field="*{email}" placeholder="请输入邮箱" required />
+
+  <button type="submit">注 册</button>
+</form>
+
+<div class="link">
+  已有账号？<a th:href="@{/login}">去登录</a>
+</div>
+
+<div class="server-time">
+  服务器时间：<span th:text="${#temporals.format(serverTime, 'yyyy-MM-dd HH:mm:ss')}"></span>
+</div>
+</body>
+</html>
