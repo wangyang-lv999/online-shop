@@ -41,9 +41,9 @@ public class TestController {
     @GetMapping("/users")
     public String users(Model model) {
         List<User> userList = new ArrayList<>();
-        userList.add(new User(1001L, "zhangsan", "123456", "张三", 20, "zhangsan@qq.com", 1, null, null));
-        userList.add(new User(1002L, "lisi", "123456", "李四", 21, "lisi@qq.com", 1, null, null));
-        userList.add(new User(1003L, "wangwu", "123456", "王五", 22, "wangwu@qq.com", 0, null, null));
+        userList.add(new User(1001L, "zhangsan", "123456", "张三", 20, "zhangsan@qq.com", 1, null, null,null));
+        userList.add(new User(1002L, "lisi", "123456", "李四", 21, "lisi@qq.com", 1, null, null,null));
+        userList.add(new User(1003L, "wangwu", "123456", "王五", 22, "wangwu@qq.com", 0, null, null,null));
 
         model.addAttribute("userList", userList);
         model.addAttribute("title", "模拟用户列表");

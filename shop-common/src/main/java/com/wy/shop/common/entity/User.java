@@ -71,4 +71,6 @@ public class User {
      * 更新时间，对应数据库的update_time字段
      */
     private LocalDateTime updateTime;
+
+    private String avatar;   // 用户头像 URL
 }

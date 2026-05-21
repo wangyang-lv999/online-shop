@@ -12,20 +12,22 @@
 <body>
 <nav>
     <strong>在线商城</strong>
-
-    <!-- 已登录：显示欢迎信息 + 退出 -->
     <span th:if="${session.loginUser != null}" style="float: right;">
-            欢迎，<strong th:text="${session.loginUser.nickname}">用户</strong>
-            &nbsp;|&nbsp;
-            <a th:href="@{/logout}">退出登录</a>
-        </span>
-
-    <!-- 未登录：显示登录 / 注册 -->
+        <img th:src="${session.loginUser.avatar != null
+                      ? session.loginUser.avatar
+                      : '/images/default-avatar.png'}"
+             style="width:30px; height:30px; border-radius:50%; vertical-align:middle; margin-right:8px;">
+        欢迎，<strong th:text="${session.loginUser.nickname}">用户</strong>
+        &nbsp;|&nbsp;
+        <a th:href="@{/profile}">个人中心</a>
+        &nbsp;|&nbsp;
+        <a th:href="@{/logout}">退出登录</a>
+    </span>
     <span th:unless="${session.loginUser != null}" style="float: right;">
-            <a th:href="@{/login}">登录</a>
-            &nbsp;|&nbsp;
-            <a th:href="@{/register}">注册</a>
-        </span>
+        <a th:href="@{/login}">登录</a>
+        &nbsp;|&nbsp;
+        <a th:href="@{/register}">注册</a>
+    </span>
 </nav>
 
 <h1>欢迎来到在线商城</h1>

@@ -1,0 +1,16 @@
+# Spring 文件上传全局配置
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 100MB
+      file-size-threshold: 1MB
+
+# 自定义文件上传配置（对应 FileUploadProperties）
+file:
+  upload:
+    base-path: D:/shop-upload/    # Windows 系统
+    # base-path: /opt/shop-upload/ # Linux 系统
+    url-prefix: /files/
+    max-file-size: 5242880         # 5MB（字节）
