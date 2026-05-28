@@ -30,3 +30,10 @@ mybatis-plus:
       table-prefix: sys_
       # 主键自增策略：全局统一主键自增
       id-type: auto
+
+file:
+  upload:
+    base-path: D:/shop-upload/    # Windows 系统
+    # base-path: /opt/shop-upload/ # Linux 系统
+    url-prefix: /files/
+    max-file-size: 5242880         # 5MB（字节）

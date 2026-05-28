@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${product.productName} + ' - 在线商城'">商品详情 - 在线商城</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+
+        /* 导航栏样式（与首页完全一致） */
+        nav {
+            background: #343a40;
+            color: white;
+            padding: 0 30px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+        nav a:hover { background: rgba(255,255,255,0.15); }
+        .nav-left { display: flex; align-items: center; }
+        .nav-left strong { font-size: 20px; margin-right: 30px; }
+        .avatar-small {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            vertical-align: middle;
+            margin-right: 8px;
+            object-fit: cover;
+        }
+
+        /* 页面容器（与首页完全一致） */
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .page-title {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        /* 商品详情主体样式 */
+        .product-detail {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        /* 商品图片区域 */
+        .product-images {
+            position: sticky;
+            top: 20px;
+        }
+        .main-image {
+            width: 100%;
+            height: 400px;
+            object-fit: contain;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+        .thumbnails {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        .thumbnail {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border: 2px solid #eee;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .thumbnail.active {
+            border-color: #3498db;
+        }
+        .thumbnail:hover {
+            border-color: #3498db;
+        }
+
+        /* 商品信息区域 */
+        .product-info h1 {
+            font-size: 22px;
+            color: #333;
+            line-height: 1.4;
+            margin-bottom: 16px;
+        }
+        .product-desc {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #eee;
+        }
+        .product-price {
+            font-size: 28px;
+            color: #e74c3c;
+            font-weight: bold;
+            margin-bottom: 24px;
+        }
+        .product-meta {
+            margin-bottom: 24px;
+            color: #666;
+        }
+        .product-meta p {
+            margin-bottom: 12px;
+        }
+        .stock-normal {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .stock-warning {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: white;
+        }
+        .status-on {
+            background: #27ae60;
+        }
+        .status-off {
+            background: #95a5a6;
+        }
+
+        /* 操作按钮 */
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        .btn {
+            padding: 12px 32px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            transition: background 0.2s;
+        }
+        .btn-primary {
+            background: #e74c3c;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #c0392b;
+        }
+        .btn-secondary {
+            background: #3498db;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #2980b9;
+        }
+        .btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        /* 商品详情富文本区域 */
+        .detail-content {
+            line-height: 1.8;
+            color: #333;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .detail-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            margin: 16px 0;
+        }
+        .detail-content p {
+            margin-bottom: 16px;
+        }
+        .no-detail {
+            text-align: center;
+            padding: 60px 0;
+            color: #999;
+            font-size: 16px;
+        }
+
+        /* 返回按钮 */
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #3498db;
+            text-decoration: none;
+        }
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .product-detail {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .main-image {
+                height: 300px;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- 导航栏（与首页完全一致，无需修改） -->
+<nav>
+    <div class="nav-left">
+        <strong>在线商城</strong>
+        <a href="/">首页</a>
+    </div>
+    <div>
+            <span th:if="${session.loginUser != null}">
+                <img th:src="${session.loginUser.avatar != null
+                              ? session.loginUser.avatar
+                              : '/images/default-avatar.png'}"
+                     class="avatar-small" alt="头像">
+                欢迎，<strong th:text="${session.loginUser.nickname}">用户</strong>
+                &nbsp;|&nbsp;
+                <a th:href="@{/profile}">个人中心</a>
+                &nbsp;|&nbsp;
+                <a th:href="@{/logout}">退出登录</a>
+            </span>
+        <span th:unless="${session.loginUser != null}">
+                <a th:href="@{/login}">登录</a>
+                &nbsp;|&nbsp;
+                <a th:href="@{/register}">注册</a>
+            </span>
+    </div>
+</nav>
+
+<!-- 页面主体 -->
+<div class="container">
+    <!-- 返回首页链接 -->
+    <a href="/" class="back-btn">← 返回首页</a>
+
+    <!-- 商品详情主体 -->
+    <div class="product-detail">
+        <!-- 左侧：商品图片 -->
+        <div class="product-images">
+            <!-- 主图 -->
+            <img id="mainImage"
+                 th:src="${product.coverImages != null and #strings.contains(product.coverImages, '&quot;')
+                         ? #strings.substringBefore(#strings.substringAfter(product.coverImages, '&quot;'), '&quot;')
+                         : '/images/default-product.png'}"
+                 th:alt="${product.productName}"
+                 class="main-image">
+
+            <!-- 缩略图列表 -->
+            <div class="thumbnails" th:if="${product.coverImages != null and #strings.contains(product.coverImages, '&quot;')}">
+                <img class="thumbnail active"
+                     th:each="image, iter : ${#strings.listSplit(#strings.replace(#strings.replace(product.coverImages, '[', ''), ']', ''), ',')}"
+                     th:src="${#strings.trim(#strings.replace(image, '&quot;', ''))}"
+                     th:alt="${product.productName + ' 图片' + (iter.index + 1)}"
+                     onclick="changeMainImage(this)">
+            </div>
+        </div>
+
+        <!-- 右侧：商品信息 -->
+        <div class="product-info">
+            <h1 th:text="${product.productName}">商品名称</h1>
+
+            <div class="product-desc" th:text="${product.description != null ? product.description : '暂无商品描述'}">
+                商品简短描述
+            </div>
+
+            <div class="product-price">
+                ¥<span th:text="${#numbers.formatDecimal(product.price, 1, 2)}">99.00</span>
+            </div>
+
+            <div class="product-meta">
+                <p>商品编号：<span th:text="${product.productId}">1</span></p>
+                <p>库存状态：
+                    <span th:if="${product.stock > 0}" class="stock-normal">
+                        库存充足（<span th:text="${product.stock}">100</span> 件）
+                    </span>
+                    <span th:if="${product.stock == 0}" class="stock-warning">
+                        暂时缺货
+                    </span>
+                </p>
+                <p>上架状态：
+                    <span class="status-badge"
+                          th:classappend="${product.status == 1 ? 'status-on' : 'status-off'}"
+                          th:text="${product.status == 1 ? '已上架' : '已下架'}">已上架</span>
+                </p>
+                <p>更新时间：<span th:text="${#temporals.format(product.updateTime, 'yyyy-MM-dd HH:mm')}">2026-05-26 10:00</span></p>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-primary"
+                        th:disabled="${product.stock == 0 or product.status == 0}">
+                    <span th:if="${product.stock > 0 and product.status == 1}">立即购买</span>
+                    <span th:if="${product.stock == 0}">暂时缺货</span>
+                    <span th:if="${product.status == 0}">商品已下架</span>
+                </button>
+                <button class="btn btn-secondary"
+                        th:disabled="${product.stock == 0 or product.status == 0}">
+                    加入购物车
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 商品详情（富文本） -->
+    <h2 class="page-title">商品详情</h2>
+
+    <div th:if="${not #strings.isEmpty(product.detail)}" class="detail-content">
+        <div th:utext="${product.detail}"></div>
+    </div>
+
+    <div th:if="${#strings.isEmpty(product.detail)}" class="no-detail">
+        暂无商品详情介绍
+    </div>
+</div>
+
+<script>
+    // 切换主图功能
+    function changeMainImage(thumbnail) {
+        // 更新主图
+        document.getElementById('mainImage').src = thumbnail.src;
+
+        // 更新缩略图激活状态
+        document.querySelectorAll('.thumbnail').forEach(thumb => {
+            thumb.classList.remove('active');
+        });
+        thumbnail.classList.add('active');
+    }
+</script>
+</body>
+</html>

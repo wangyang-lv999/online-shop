@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${product.productId == null ? '添加商品' : '编辑商品'}">商品</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        .header { background: #343a40; color: white; padding: 0 30px; height: 60px;
+            display: flex; align-items: center; }
+        .header h3 { margin-right: 30px; }
+        .nav a { color: white; margin: 0 10px; text-decoration: none; padding: 8px 12px; }
+        .container { max-width: 860px; margin: 40px auto; padding: 20px; }
+        h2 { margin-bottom: 24px; color: #2c3e50; }
+        .form-item { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; }
+        input[type=text], input[type=number] {
+            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+        input:focus { outline: none; border-color: #3498db; }
+
+        /* wangEditor v5 需要给编辑器区域设定高度 */
+        #toolbar-container { border: 1px solid #ddd; border-bottom: none; border-radius: 4px 4px 0 0; }
+        #editor-container  { border: 1px solid #ddd; border-radius: 0 0 4px 4px;
+            height: 400px; overflow-y: hidden; }
+
+        .cover-preview { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .cover-preview img { width: 80px; height: 80px; object-fit: cover;
+            border-radius: 4px; border: 1px solid #ddd; }
+        .btn-save { padding: 10px 24px; background: #27ae60; color: white;
+            border: none; border-radius: 4px; cursor: pointer; font-size: 15px; }
+        .btn-save:hover { background: #219a52; }
+        .btn-back { padding: 10px 20px; background: #95a5a6; color: white;
+            text-decoration: none; margin-left: 10px; border-radius: 4px; font-size: 15px; }
+        .error-msg { color: #e74c3c; background: #fdf3f2; padding: 10px 16px;
+            border-radius: 4px; margin-bottom: 20px; border-left: 4px solid #e74c3c; }
+    </style>
+
+    <!-- wangEditor v5 （注意：是 @wangeditor/editor，不是 wangeditor） -->
+    <link  href="https://cdn.jsdelivr.net/npm/@wangeditor/editor@latest/dist/css/style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@wangeditor/editor@latest/dist/index.js"></script>
+</head>
+<body>
+
+<div class="header">
+    <h3>电商后台管理</h3>
+    <div class="nav">
+        <a href="/admin/user/list">用户管理</a>
+        <a href="/admin/product/list">商品管理</a>
+    </div>
+</div>
+
+<div class="container">
+    <h2 th:text="${product.productId == null ? '添加商品' : '编辑商品'}">商品</h2>
+
+    <!-- 错误提示 -->
+    <div th:if="${error}" class="error-msg" th:text="${error}"></div>
+
+    <form th:action="${product.productId == null ? '/admin/product/save' : '/admin/product/update'}"
+          method="post" enctype="multipart/form-data" th:object="${product}" id="productForm">
+
+        <input type="hidden" th:field="*{productId}">
+
+        <!-- 把已有封面图 JSON 存到隐藏域，供 JS 读取做预览 -->
+        <input type="hidden" id="coverImagesData" th:value="${product.coverImages}">
+        <!-- 把已有详情存到隐藏域，供 wangEditor 回显 -->
+        <input type="hidden" id="detailInput" name="detail" th:value="${product.detail}">
+
+        <!-- 商品名称 -->
+        <div class="form-item">
+            <label>商品名称 <span style="color:#e74c3c">*</span></label>
+            <input type="text" th:field="*{productName}" placeholder="请输入商品名称" required>
+        </div>
+
+        <!-- 商品价格 -->
+        <div class="form-item">
+            <label>商品价格（元）<span style="color:#e74c3c">*</span></label>
+            <input type="number" step="0.01" min="0" th:field="*{price}" placeholder="请输入价格" required>
+        </div>
+
+        <!-- 封面图上传 -->
+        <div class="form-item">
+            <label>商品封面图（可多选，支持 jpg/png/gif）</label>
+            <input type="file" name="coverFiles" accept="image/*" multiple
+                   onchange="previewNewCovers(this)">
+            <!-- 已上传封面预览（JS 渲染） -->
+            <div id="existingCovers" class="cover-preview" style="margin-top:10px;"></div>
+            <!-- 新选文件预览 -->
+            <div id="newCoverPreview" class="cover-preview"></div>
+        </div>
+
+        <!-- 商品详情（富文本） -->
+        <div class="form-item">
+            <label>商品详情</label>
+            <!-- v5：toolbar 和 editor 是两个独立的 div -->
+            <div id="toolbar-container"></div>
+            <div id="editor-container"></div>
+        </div>
+
+        <div style="margin-top: 24px;">
+            <button type="submit" class="btn-save">保存</button>
+            <a href="/admin/product/list" class="btn-back">返回列表</a>
+        </div>
+    </form>
+</div>
+
+<script>
+    // ===== wangEditor v5 初始化 =====
+    const { createEditor, createToolbar } = window.wangEditor
+
+    const editor = createEditor({
+        selector: '#editor-container',
+        html: document.getElementById('detailInput').value || '',
+        config: {
+            placeholder: '请输入商品详情...',
+            MENU_CONF: {
+                uploadImage: {
+                    server: '/api/upload',
+                    fieldName: 'file',
+                    maxFileSize: 5 * 1024 * 1024,
+                    allowedFileTypes: ['image/jpeg', 'image/png', 'image/gif'],
+                    // v5 的 insertFn 需要 3 个参数：url, alt, href
+                    customInsert(res, insertFn) {
+                        if (res.code === 200) {
+                            insertFn(res.data, '', '')
+                        } else {
+                            alert('图片上传失败：' + (res.message || '未知错误'))
+                        }
+                    }
+                }
+            }
+        },
+        mode: 'default'
+    })
+
+    createToolbar({
+        editor,
+        selector: '#toolbar-container',
+        mode: 'default'
+    })
+
+    // 提交前把编辑器 HTML 同步到隐藏域
+    document.getElementById('productForm').addEventListener('submit', function () {
+        document.getElementById('detailInput').value = editor.getHtml()
+    })
+
+    // ===== 封面图预览 =====
+
+    // 1. 页面加载时，回显已有封面图（编辑模式）
+    window.addEventListener('DOMContentLoaded', function () {
+        const raw = document.getElementById('coverImagesData').value
+        if (!raw) return
+        try {
+            const urls = JSON.parse(raw)
+            const container = document.getElementById('existingCovers')
+            if (urls.length > 0) {
+                const label = document.createElement('p')
+                label.textContent = '已上传封面：'
+                label.style.width = '100%'
+                label.style.fontSize = '13px'
+                label.style.color = '#666'
+                container.appendChild(label)
+            }
+            urls.forEach(function (url) {
+                const img = document.createElement('img')
+                img.src = url
+                img.alt = '封面'
+                container.appendChild(img)
+            })
+        } catch (e) { /* JSON 解析失败则忽略 */ }
+    })
+
+    // 2. 选新文件后实时预览
+    function previewNewCovers(input) {
+        const container = document.getElementById('newCoverPreview')
+        container.innerHTML = ''
+        if (!input.files || input.files.length === 0) return
+        const label = document.createElement('p')
+        label.textContent = '新选文件预览：'
+        label.style.width = '100%'
+        label.style.fontSize = '13px'
+        label.style.color = '#666'
+        container.appendChild(label)
+        Array.from(input.files).forEach(function (file) {
+            const reader = new FileReader()
+            reader.onload = function (e) {
+                const img = document.createElement('img')
+                img.src = e.target.result
+                img.alt = file.name
+                container.appendChild(img)
+            }
+            reader.readAsDataURL(file)
+        })
+    }
+</script>
+</body>
+</html>

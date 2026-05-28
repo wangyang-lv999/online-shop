@@ -36,6 +36,10 @@ public class Product {
      */
     private BigDecimal price;
 
+    private String coverImages;   // JSON 数组，存原图 URL
+
+    private String detail;        // 富文本 HTML
+
     /**
      * 商品库存，对应数据库的stock字段
      */

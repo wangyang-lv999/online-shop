@@ -4,34 +4,155 @@
     <meta charset="UTF-8">
     <title>在线商城 - 首页</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; }
-        nav  { background: #2c3e50; padding: 12px 20px; color: white; margin-bottom: 20px; }
-        nav a { color: white; text-decoration: none; margin-right: 16px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+
+        /* 导航栏样式 */
+        nav {
+            background: #343a40;
+            color: white;
+            padding: 0 30px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+        nav a:hover { background: rgba(255,255,255,0.15); }
+        .nav-left { display: flex; align-items: center; }
+        .nav-left strong { font-size: 20px; margin-right: 30px; }
+        .avatar-small {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            vertical-align: middle;
+            margin-right: 8px;
+            object-fit: cover;
+        }
+
+        /* 页面容器 */
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .page-title {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        /* 商品网格布局 */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: box-shadow 0.3s;
+        }
+        .product-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .product-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            background: #f8f9fa;
+        }
+        .product-info {
+            padding: 12px;
+        }
+        .product-name {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.4;
+            height: 40px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        .product-price {
+            font-size: 18px;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .no-product {
+            text-align: center;
+            padding: 60px 0;
+            color: #999;
+            font-size: 16px;
+        }
+        div>a{
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
+<!-- 导航栏 -->
 <nav>
-    <strong>在线商城</strong>
-    <span th:if="${session.loginUser != null}" style="float: right;">
-        <img th:src="${session.loginUser.avatar != null
-                      ? session.loginUser.avatar
-                      : '/images/default-avatar.png'}"
-             style="width:30px; height:30px; border-radius:50%; vertical-align:middle; margin-right:8px;">
-        欢迎，<strong th:text="${session.loginUser.nickname}">用户</strong>
-        &nbsp;|&nbsp;
-        <a th:href="@{/profile}">个人中心</a>
-        &nbsp;|&nbsp;
-        <a th:href="@{/logout}">退出登录</a>
-    </span>
-    <span th:unless="${session.loginUser != null}" style="float: right;">
-        <a th:href="@{/login}">登录</a>
-        &nbsp;|&nbsp;
-        <a th:href="@{/register}">注册</a>
-    </span>
+    <div class="nav-left">
+        <strong>在线商城</strong>
+        <a href="/">首页</a>
+    </div>
+    <div>
+            <span th:if="${session.loginUser != null}">
+                <img th:src="${session.loginUser.avatar != null
+                              ? session.loginUser.avatar
+                              : '/images/default-avatar.png'}"
+                     class="avatar-small" alt="头像">
+                欢迎，<strong th:text="${session.loginUser.nickname}">用户</strong>
+                &nbsp;|&nbsp;
+                <a th:href="@{/profile}">个人中心</a>
+                &nbsp;|&nbsp;
+                <a th:href="@{/logout}">退出登录</a>
+            </span>
+        <span th:unless="${session.loginUser != null}">
+                <a th:href="@{/login}">登录</a>
+                &nbsp;|&nbsp;
+                <a th:href="@{/register}">注册</a>
+            </span>
+    </div>
 </nav>
 
-<h1>欢迎来到在线商城</h1>
-<p>这是首页，制作中...</p>
-<!-- 进阶作业：在此添加商品列表 -->
+<!-- 页面主体 -->
+<div class="container">
+    <h2 class="page-title">最新上架</h2>
+
+    <!-- 商品列表 -->
+    <div class="product-grid" th:if="${not #lists.isEmpty(productList)}">
+        <div class="product-card" th:each="product : ${productList}"
+             th:with="coverJson=${product.coverImages},
+                      firstCover=${coverJson != null and #strings.contains(coverJson, '&quot;') ? #strings.substringBefore(#strings.substringAfter(coverJson, '&quot;'), '&quot;') : '/images/default-product.png'}">
+            <a th:href="@{/product/{id}(id=${product.productId})}">
+                <!-- 商品封面图 -->
+                <img th:src="${firstCover}"
+                     th:alt="${product.productName}"
+                     class="product-img">
+
+                <!-- 商品信息 -->
+                <div class="product-info">
+                    <div class="product-name" th:text="${product.productName}">商品名称</div>
+                    <div class="product-price">¥<span th:text="${#numbers.formatDecimal(product.price, 1, 2)}">99.00</span></div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- 无商品提示 -->
+    <div class="no-product" th:if="${#lists.isEmpty(productList)}">
+        暂无上架商品，敬请期待...
+    </div>
+</div>
 </body>
 </html>
