@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8"><title>API 交互测试</title>
+    <style>
+        body { max-width: 800px; margin: 50px auto; padding: 0 20px; }
+        .section { margin-bottom: 30px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        input  { padding: 8px; width: 200px; margin-right: 10px; }
+        button { padding: 8px 16px; background: #3498db; color: white;
+            border: none; border-radius: 4px; cursor: pointer; }
+        .result { margin-top: 15px; padding: 10px; background: #f5f5f5;
+            border-radius: 4px; white-space: pre-wrap; font-family: monospace; }
+    </style>
+</head>
+<body>
+<h1>API 交互测试</h1>
+
+<div class="section">
+    <h3>GET 请求测试</h3>
+    <input type="text" id="nameInput" placeholder="请输入你的名字">
+    <button onclick="testGet()">发送 GET 请求</button>
+    <div id="getResult" class="result"></div>
+</div>
+
+<div class="section">
+    <h3>POST 请求测试</h3>
+    <input type="text"   id="usernameInput" placeholder="用户名">
+    <input type="number" id="ageInput"      placeholder="年龄">
+    <button onclick="testPost()">发送 POST 请求</button>
+    <div id="postResult" class="result"></div>
+</div>
+
+<script>
+    function testGet() {
+        const name = document.getElementById('nameInput').value;
+        fetch('/api/test/hello?name=' + encodeURIComponent(name))
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('getResult').textContent = JSON.stringify(data, null, 2);
+            });
+    }
+    function testPost() {
+        fetch('/api/test/user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: document.getElementById('usernameInput').value,
+                age: parseInt(document.getElementById('ageInput').value)
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('postResult').textContent = JSON.stringify(data, null, 2);
+            });
+    }
+</script>
+</body>
+</html>

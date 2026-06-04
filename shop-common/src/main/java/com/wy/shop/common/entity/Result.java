@@ -26,6 +26,11 @@ public class Result<T> {
         return new Result<>(200, "操作成功", data);
     }
 
+    // 成功（无数据）
+    public static <T> Result<T> success() {
+        return new Result<>(200, "操作成功", null);
+    }
+
     /**
      * 失败响应的静态方法，传入错误提示信息
      */
