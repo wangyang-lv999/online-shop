@@ -5,7 +5,7 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <!-- namespace必须和Mapper接口的全限定包名+类名完全一致 -->
-<mapper namespace="com.ylh.shop.web.mapper.WebProductMapper">
+<mapper namespace="com.wy.shop.web.mapper.WebProductMapper">
 
     <!-- 根据ID查询商品详情，对应接口的selectProductById方法 -->
     <!-- resultType写Product，因为yml中配置了公共实体类的别名扫描 -->
